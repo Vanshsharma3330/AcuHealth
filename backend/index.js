@@ -55,5 +55,5 @@ const connectDB = async()=>{
 
 app.listen(port, ()=>{
     connectDB();
-    console.log("Server is running on port (http://localhost:5000):- " + port);
+    console.log(`Server is running on port http://localhost:${port}`);
 })
