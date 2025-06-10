@@ -11,5 +11,8 @@ export default defineConfig({
     hmr: {
       overlay: true,
     },
+    port: 5174,
+    host: true,
   },
+  base: '/',
 })

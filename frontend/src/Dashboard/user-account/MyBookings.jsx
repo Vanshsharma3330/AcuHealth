@@ -5,29 +5,31 @@ import Loading from "../../components/Loader/Loading"
 import Error from "../../components/Error/Error"
 
 const MyBookings = () => {
-
     const {data:appointments, loading, error} = useFetchData(`${BASE_URL}/users/appointments/my-appointments`)
 
-  return <div>
-    {loading && !error && <Loading/>}
+    return (
+        <div className="mt-8">
+            {loading && !error && <Loading/>}
 
-    {error && !loading && <Error errMessage={error} />}
+            {error && !loading && <Error errMessage={error} />}
 
-    {!loading && !error && <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {
-            appointments.map(doctor=>(
-                <DoctorCard doctor={doctor} key={doctor._id} />
-            ))
-        }
+            {!loading && !error && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-32 gap-y-6">
+                    {appointments.map(doctor => (
+                        <div key={doctor._id} className="transform transition-all duration-300 hover:scale-[1.02]">
+                            <DoctorCard doctor={doctor} />
+                        </div>
+                    ))}
+                </div>
+            )}
 
-    </div>}
-
-    {!loading && !error && appointments.length === 0 && (
-        <h2 className="mt-5 text-center leading-7 text-[20px] font-semibold text-primaryColor">
-            You did not book any doctor yet!
-        </h2>
-    )}
-  </div>
+            {!loading && !error && appointments.length === 0 && (
+                <h2 className="mt-5 text-center leading-7 text-[20px] font-semibold text-primaryColor">
+                    You did not book any doctor yet!
+                </h2>
+            )}
+        </div>
+    )
 }
 
 export default MyBookings

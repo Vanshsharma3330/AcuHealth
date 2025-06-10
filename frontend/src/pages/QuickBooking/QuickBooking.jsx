@@ -43,7 +43,22 @@ const QuickBooking = () => {
       }
 
       if (result.data.session) {
-        window.location.href = result.data.session.url;
+        // Open Stripe checkout in a new window
+        const stripeWindow = window.open(result.data.session.url, '_blank');
+        
+        // Check if the window was opened successfully
+        if (stripeWindow) {
+          // Add event listener for when the window is closed
+          const checkWindow = setInterval(() => {
+            if (stripeWindow.closed) {
+              clearInterval(checkWindow);
+              // Redirect to success page in the main window with session ID
+              window.location.href = `/checkout-success?session_id=${result.data.session.id}`;
+            }
+          }, 1000);
+        } else {
+          alert("Please allow popups for this website");
+        }
       }
     } catch (err) {
       console.error('Error:', err);

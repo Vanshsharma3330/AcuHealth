@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {AiOutlineDelete} from 'react-icons/ai'
 import uploadImageToCloudinary from '../../utils/uploadCloudinary'
-import { BASE_URL, token } from '../../config'
+import { BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 
 const Profile = ({doctorData}) => {
@@ -54,6 +54,11 @@ const Profile = ({doctorData}) => {
         e.preventDefault()
 
         try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                return toast.error('Please login to update your profile');
+            }
+
             const res = await fetch(`${BASE_URL}/doctors/${doctorData._id}`,{
                 method: 'PUT',
                 headers:{
@@ -63,14 +68,13 @@ const Profile = ({doctorData}) => {
                 body: JSON.stringify(formData)
             })
 
-            const result = await res.json()
+            const {message} = await res.json();
 
             if(!res.ok){
-                throw Error(result.message)
+                throw new Error(message)
             }
 
-            toast.success(result.message)
-
+            toast.success(message)
         } catch (err) {
             toast.error(err.message)
         }

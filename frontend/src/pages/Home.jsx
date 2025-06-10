@@ -169,16 +169,6 @@ const Home = () => {
           <p className='text__para text-center'>
             World-class health services for all<br/> Receive expert, superior care through our exceptional health system.
           </p>
-          <div className='flex justify-center mt-4'>
-            <Link to='/services' className='inline-block' onClick={(e) => {
-              e.preventDefault();
-              window.location.href = '/services';
-            }}>
-              <button className='btn'>
-                Learn More
-              </button>
-            </Link>
-          </div>
         </div>
 
         <ServiceList />
