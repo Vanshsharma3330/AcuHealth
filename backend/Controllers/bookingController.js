@@ -51,12 +51,15 @@ export const getCheckoutSession = async(req,res)=>{
         console.log('Creating Stripe checkout session...')
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
         
+        // Get the frontend URL from the request origin
+        const frontendUrl = req.headers.origin || process.env.CLIENT_SITE_URL || 'http://localhost:5174'
+        
         //create stripe checkout session
         const session = await stripe.checkout.sessions.create({
             payment_method_types:['card'],
             mode:'payment',
-            success_url:`${process.env.CLIENT_SITE_URL}/checkout-success`,
-            cancel_url:`${process.env.CLIENT_SITE_URL}/doctors/${doctor.id}`,
+            success_url:`http://localhost:5174/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url:`http://localhost:5174/doctors/${doctor.id}`,
             customer_email: user.email,
             client_reference_id: req.params.doctorId,
             line_items:[
@@ -217,5 +220,64 @@ export const rescheduleBooking = async(req,res)=>{
             success: false,
             message: 'Error rescheduling booking'
         })
+    }
+}
+
+// Verify payment
+export const verifyPayment = async(req,res)=>{
+    try {
+        const { sessionId } = req.params;
+        
+        if (!process.env.STRIPE_SECRET_KEY) {
+            return res.status(200).json({
+                success: true,
+                message: "Payment verified (direct booking)"
+            });
+        }
+
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+        
+        // Retrieve the session
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        
+        if (!session) {
+            return res.status(404).json({
+                success: false,
+                message: "Payment session not found"
+            });
+        }
+
+        // Find the booking with this session ID
+        const booking = await Booking.findOne({ session: sessionId });
+        
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found"
+            });
+        }
+
+        // Update booking status based on payment status
+        if (session.payment_status === 'paid') {
+            booking.status = 'approved';
+            booking.isPaid = true;
+            await booking.save();
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Payment verified successfully",
+            data: {
+                booking,
+                paymentStatus: session.payment_status
+            }
+        });
+    } catch (err) {
+        console.error('Payment verification error:', err);
+        res.status(500).json({
+            success: false,
+            message: "Error verifying payment",
+            error: err.message
+        });
     }
 }

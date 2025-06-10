@@ -5,14 +5,16 @@ import {
     getUserBookings, 
     cancelBooking, 
     rescheduleBooking,
-    getDoctorBookings 
+    getDoctorBookings,
+    verifyPayment 
 } from '../Controllers/bookingController.js'
 
 const router = express.Router()
 
 router.post('/checkout-session/:doctorId', authenticate, getCheckoutSession)
-router.get('/user-bookings', authenticate, getUserBookings)
-router.get('/doctor-bookings', authenticate, getDoctorBookings)
+router.get('/verify-payment/:sessionId', authenticate, verifyPayment)
+router.get('/my-appointments', authenticate, getUserBookings)
+router.get('/doctor-appointments', authenticate, getDoctorBookings)
 router.patch('/cancel/:bookingId', authenticate, cancelBooking)
 router.patch('/reschedule/:bookingId', authenticate, rescheduleBooking)
 
