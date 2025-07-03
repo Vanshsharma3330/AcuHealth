@@ -1,4 +1,4 @@
-# Medicare Booking Platform
+# AcuHealth
 
 A full-stack web application for booking medical appointments, finding doctors and clinics, and managing healthcare interactions. Built with React, Node.js, Express, MongoDB, and Stripe.
 
@@ -30,8 +30,8 @@ A full-stack web application for booking medical appointments, finding doctors a
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Vanshsharma3330/Medicare-Booking.git
-cd Medicare-Booking
+git clone https://github.com/Vanshsharma3330/AcuHealth.git
+cd AcuHealth
 ```
 
 ### 2. Backend Setup
